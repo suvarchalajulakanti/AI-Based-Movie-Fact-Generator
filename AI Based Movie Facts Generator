@@ -1,0 +1,44 @@
+!pip install -q groq
+from google.colab import userdata
+from groq import Groq
+# Get API key from Colab Secrets
+api_key = userdata.get("GROQ_API_KEY")
+# Create Groq client
+client = Groq(api_key=api_key)
+# Model
+MODEL = "openai/gpt-oss-120b"
+# System prompt - defines the AI's role
+system_prompt ="""
+your an short review generator of your favourite movie
+your role is to help the user to generate and know the facts about the movie
+for the movie name given by the user 
+generate all the facts about the movie in 5 points"""
+n=input("name of the movie:")
+temperature=0.5
+print("\n" + "=" * 70)
+print("       AI MOVIE FACT GENERATOR")
+print("=" * 70)
+response = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {
+                "role": "system",
+                "content": system_prompt
+            },
+            {
+                "role": "user",
+                "content": n
+            }
+ ],
+        temperature=temperature
+    )
+# Get AI completion
+facts = response.choices[0].message.content
+# Get token usage
+total_tokens = response.usage.total_tokens
+print("-" * 70)
+print("\nFACTS ABOUT MOVIE:")
+print(facts)
+print("\nTOTAL TOKEN USAGE:")
+print(total_tokens)
+print("-" * 70) 
